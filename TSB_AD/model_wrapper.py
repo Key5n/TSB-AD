@@ -1,12 +1,13 @@
 import numpy as np
 import math
+import sys
 from sklearn.preprocessing import MinMaxScaler
 from .utils.slidingWindows import find_length_rank
 
 Unsupervise_AD_Pool = ['SR', 'NORMA', 'Series2Graph', 'Sub_IForest', 'IForest', 'LOF', 'Sub_LOF', 'POLY', 'MatrixProfile', 'Sub_PCA', 'PCA', 'HBOS', 
                         'Sub_HBOS', 'KNN', 'Sub_KNN','KMeansAD', 'KMeansAD_U', 'KShapeAD', 'COPOD', 'CBLOF', 'COF', 'EIF', 'RobustPCA', 'Lag_Llama', 'TimesFM', 'Chronos', 'MOMENT_ZS']
 Semisupervise_AD_Pool = ['SAND', 'MCD', 'Sub_MCD', 'OCSVM', 'Sub_OCSVM', 'AutoEncoder', 'CNN', 'LSTMAD', 'TranAD', 'USAD', 'OmniAnomaly', 
-                        'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA', 'MOMENT_FT']
+                        'AnomalyTransformer', 'TimesNet', 'FITS', 'Donut', 'OFA', 'MOMENT_FT', 'MDRS']
 
 def run_Unsupervise_AD(model_name, data, **kwargs):
     try:
@@ -28,6 +29,7 @@ def run_Semisupervise_AD(model_name, data_train, data_test, **kwargs):
         return results
     except:
         error_message = f"Model function '{function_name}' is not defined."
+        sys.exit(1)
         print(error_message)
         return error_message
 
@@ -408,6 +410,16 @@ def run_MOMENT_FT(data_train, data_test, win_size=256):
     clf = MOMENT(win_size=win_size, input_c=data_test.shape[1])
 
     # Finetune
+    clf.fit(data_train)
+    score = clf.decision_function(data_test)
+    score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
+    return score
+
+def run_MDRS(data_train, data_test, leaking_rate=1.0, input_scale=1.0, rho=0.95, delta=0.0001):
+    from .models.MDRS import MDRS
+    N_x = 500
+    N_u = data_train.shape[1]
+    clf = MDRS(N_u, N_x, leaking_rate=leaking_rate, input_scale=input_scale, rho=rho, delta=delta)
     clf.fit(data_train)
     score = clf.decision_function(data_test)
     score = MinMaxScaler(feature_range=(0,1)).fit_transform(score.reshape(-1,1)).ravel()
