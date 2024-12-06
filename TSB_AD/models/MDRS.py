@@ -91,7 +91,8 @@ class MDRS(BaseDetector):
         delta=0.0001,
         update=1,
         lam=1,
-        seed=0
+        seed=0,
+        normalize=True
     ):
         super().__init__()
         
@@ -113,6 +114,7 @@ class MDRS(BaseDetector):
         self.lam = lam
         self.update = update
         self.P = (1.0 / self.delta) * np.eye(N_x, N_x)
+        self.normalize = normalize
 
     def fit(self, U, trans_len=0):
         """Fit detector. y is ignored in unsupervised methods.
@@ -135,6 +137,8 @@ class MDRS(BaseDetector):
         """
         train_length = len(U)
 
+        if self.normalize:
+            U = MinMaxScaler(feature_range=(0,1)).fit_transform(U)
         for n in range(train_length):
             x_in = self.Input(U[n])
 
@@ -173,6 +177,9 @@ class MDRS(BaseDetector):
         data_length = len(U)
         label = []
         mahalanobis_distances = []
+
+        if self.normalize:
+            U = MinMaxScaler(feature_range=(0,1)).fit_transform(U)
 
         if threshold is not None:
             self.threshold = threshold
