@@ -5,7 +5,7 @@
 import pandas as pd
 import numpy as np
 import torch
-import random, argparse, time, os
+import random, argparse, time, os, sys
 import itertools
 from TSB_AD.evaluation.metrics import get_metrics
 from TSB_AD.utils.slidingWindows import find_length_rank
@@ -72,6 +72,8 @@ if __name__ == '__main__':
                 evaluation_result = get_metrics(output, label, slidingWindow=slidingWindow)
                 print('evaluation_result: ', evaluation_result)
                 list_w = list(evaluation_result.values())
+            except KeyboardInterrupt:
+                sys.exit(0)
             except:
                 list_w = [0]*9
             list_w.insert(0, params)
