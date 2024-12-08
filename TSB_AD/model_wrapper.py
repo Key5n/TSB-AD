@@ -417,7 +417,7 @@ def run_MOMENT_FT(data_train, data_test, win_size=256):
 
 def run_MDRS(data_train, data_test, leaking_rate=1.0, input_scale=1.0):
     from .models.MDRS import MDRS
-    N_x = 500
+    N_x = 200
     N_u = data_train.shape[1]
     clf = MDRS(N_u, N_x, leaking_rate=leaking_rate, input_scale=input_scale)
     clf.fit(data_train)
