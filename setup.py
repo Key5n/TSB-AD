@@ -38,6 +38,7 @@ setup(
         'networkx>=3.1',
         'transformers>=4.38.0',
         'torch>=1.8.0',
+        'PATE >= 0.1.1'
     ],
     python_requires='>=3.8',  # Minimum version requirement of the package
     entry_points={},
