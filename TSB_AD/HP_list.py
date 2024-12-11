@@ -240,8 +240,9 @@ Uni_algo_HP_dict = {
         'win_size': [64, 128, 256]
     },
     'MDRS': {
-        'leaking_rate': [0.1, 0.9, 1.0],
-        'input_scale': [0.01, 0.1, 1.0],
+        'leaking_rate': [0.9],
+        'input_scale': [1.0],
+        'trans_len': [10, 50, 100, 500]
     }
 }
 
